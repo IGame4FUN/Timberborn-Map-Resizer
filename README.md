@@ -20,7 +20,8 @@ _"(can be negative) shift_x: "
 "(can be negative) shift_y: "_  
 
 **Can:**  
--Copy terrain, water and moisture maps and entities.  
+-Copy terrain, water and moisture maps.  
+-Copy entities.  
 -Resize (-+) the map.  
 -Shift the map.  
 
