@@ -22,7 +22,7 @@ _or like this:_
 **Can:**  
 -Copy terrain, water and moisture maps.  
 -Copy entities.  
--Resize (-+) the map.  
+-Resize (-/+) the map.  
 -Shift the map.  
 
 <p align="center">
