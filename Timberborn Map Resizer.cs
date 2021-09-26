@@ -144,7 +144,7 @@ namespace Timberborn_Map_Resizer
 
 			return map_heights;
 		}
-		static bool Accept_Command(ref int rx, ref int ry, ref int sx, ref int sy)
+		static bool Accept_Command(ref int rx, ref int ry, ref int sx, ref int sy, ref bool re)
 		{
 			string input_line = Console.ReadLine();
 			string[] command = input_line.Split(' ');
@@ -152,8 +152,8 @@ namespace Timberborn_Map_Resizer
 
 			for (int i = 0; i < command.Length; i++)
 			{
-				Console.WriteLine(command[i][0]);
-				Console.WriteLine($"command[i] : \"{command[i]}\"");
+				//Console.WriteLine(command[i][0]);
+				//Console.WriteLine($"command[i] : \"{command[i]}\"");
 				if (command[i][0] == '-')
 				{
 					switch (command[i])
@@ -169,14 +169,26 @@ namespace Timberborn_Map_Resizer
 						case "-s":
 							Console.WriteLine("Shift detected");
 							if (!int.TryParse(command[i + 1], out sx))
-								Console.WriteLine("Invalid x resize value");
+								Console.WriteLine("Invalid x shift value");
 							if (!int.TryParse(command[i + 2], out sy))
-								Console.WriteLine("Invalid y resize value");
+								Console.WriteLine("Invalid y shift value");
+							break;
+
+						case "-re":
+							Console.WriteLine("Entities Removed");
+							re = true;
 							break;
 
 						case "-resize":
 							Console.WriteLine("Start detected");
 							start = true;
+							break;
+
+						case "t":
+							break;
+						case "w":
+							break;
+						case "m":
 							break;
 
 						default:
@@ -187,6 +199,43 @@ namespace Timberborn_Map_Resizer
 			}
 			return start;
 		}
+
+		static string Write_Empty(ref string map_data, int size_x, int size_y, string empty_val = "0 ")
+        {
+			string empty_row = "";
+			string empty_map = "";
+
+			for (int x = 0; x < size_x; x++)
+            {
+				empty_row += empty_val;
+			}
+			for (int y = 0; y < size_y; y++)
+			{
+				empty_map += empty_row;
+			}
+
+			empty_map = empty_map.Remove(empty_map.Length - 1, empty_map.Length);
+
+			return empty_map; //returns string filled with empty values
+		}
+
+		static void Serializer_Kindof(System.IO.StreamReader sr)
+        {
+			char c = '0';
+			string word = "";
+
+			while (c != '{' || c != '}')
+            {
+				c = (char)sr.Read();
+				if (c == '\"')
+                {
+					while (c != '\"')
+                    {
+						word += (char)sr.Read();
+					}
+                }
+			}
+        }
 
 		//rudimentary_json_deserializer ()
 		static void Main()
@@ -200,11 +249,6 @@ namespace Timberborn_Map_Resizer
 			map_size_x = Get_XY(ref map_data, map_size_text_x); //(MIN: 4x4, MAX: 256x256)
 			map_size_y = Get_XY(ref map_data, map_size_text_y); //(MIN: 4x4, MAX: 256x256)
 
-			//console input
-			bool start = false;
-			while (!start)
-				start = Accept_Command(ref resize_x, ref resize_y, ref shift_x, ref shift_y);
-
 			switch (resize_x)
 			{
 				case < 4:
@@ -213,13 +257,21 @@ namespace Timberborn_Map_Resizer
 					break;
 			}
 
+			//center map ->
+			shift_x = (map2_size_x - map_size_x) / 2;
+			shift_y = (map2_size_y - map_size_y) / 2;
+
+			bool re = false;
+			bool start = false;
+
+			while (!start)
+				start = Accept_Command(ref resize_x, ref resize_y, ref shift_x, ref shift_y, ref re);
+
 			// resizing ->
 			map2_size_x = map_size_x + resize_x; //(MIN: 4x4, MAX: 256x256)
 			map2_size_y = map_size_y + resize_y; //(MIN: 4x4, MAX: 256x256)
 
-			//center map ->
-			shift_x = (map2_size_x - map_size_x) / 2;
-			shift_y = (map2_size_y - map_size_y) / 2;
+			Console.WriteLine("Working...");
 
 			int index_temp = Start_Pos(ref map_data, map_size_text_x);
 
@@ -236,28 +288,28 @@ namespace Timberborn_Map_Resizer
 			string map;
 			double[,] map2;
 
-			//Console.WriteLine("terrain_map");
+			Console.WriteLine("terrain_map");
 			map2 = Rewrite_Map(ref map_data, terrain_map_text, camera_restorer_text, ref start_pos, ref end_pos);
 
 			map = Crop_Terrain(ref map2, desired_height);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
-			//Console.WriteLine("water_map");
+			Console.WriteLine("water_map");
 			map2 = Rewrite_Map(ref map_data, water_map_text, outflows_text, ref start_pos, ref end_pos);
 
 			map = Crop_Terrain(ref map2, 0);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
-			//Console.WriteLine("moisture_map");
+			Console.WriteLine("moisture_map");
 			map2 = Rewrite_Map(ref map_data, soil_moisture_simulator_text, entities_text, ref start_pos, ref end_pos);
 
 			map = Crop_Terrain(ref map2, 0);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
-			//temporarily clearing the overflow and entities
+			//temporarily clearing the overflow
 			string temp_overflow_text = "0:0:0:0 ";
 			string temp_overflow_text2 = "";
 			string temp_overflow_text3 = "";
@@ -283,55 +335,62 @@ namespace Timberborn_Map_Resizer
 			start_pos = Start_Pos(ref map_data, entities_text);
 			end_pos = map_data.Length;
 
-			//map_data = map_data.Remove(start_pos, end_pos - start_pos);
-			//map_data = map_data.Insert(start_pos, "[]}"); //just clears entities
-
-			//suuuper sketchy shifting of entities ->
-			bool go = true;
-			//int current_position;
-			int safety_net = 0;
-			int coord_text_length = map_size_text_x.Length;
-			int coord_xy;
-			string temp_text = "\"Coordinates\":";
-
-			while (go == true) //extremely sketchy
+			if (re)
 			{
-				start_pos = map_data.IndexOf(temp_text, start_pos);
-				if (start_pos == -1)
+				map_data = map_data.Remove(start_pos, end_pos - start_pos);
+				map_data = map_data.Insert(start_pos, "[]}"); //just clears entities
+			}
+			else
+			{
+
+				//suuuper sketchy shifting of entities ->
+				bool go = true;
+				int safety_net = 0;
+				int coord_text_length = map_size_text_x.Length;
+				int coord_xy;
+				string temp_text = "\"Coordinates\":";
+
+				Console.WriteLine("Entities");
+
+				while (go == true) //extremely sketchy
 				{
-					go = false;
+					start_pos = map_data.IndexOf(temp_text, start_pos);
+					if (start_pos == -1)
+					{
+						go = false;
+					}
+					else
+					{
+						//modify X in string ->
+						start_pos = map_data.IndexOf(map_size_text_x, start_pos);
+						coord_xy = Get_XY(ref map_data, map_size_text_x, start_pos);
+
+						map_data = map_data.Remove(start_pos + coord_text_length, Convert.ToString(coord_xy).Length);
+						coord_xy += shift_x;
+
+						map_data = map_data.Insert(start_pos + coord_text_length, Convert.ToString(coord_xy));
+						start_pos += 4;
+
+						//modify Y in string ->
+						start_pos = map_data.IndexOf(map_size_text_y, start_pos);
+						coord_xy = Get_XY(ref map_data, map_size_text_y, start_pos);
+
+						map_data = map_data.Remove(start_pos + coord_text_length, Convert.ToString(coord_xy).Length);
+						coord_xy += shift_y;
+
+						map_data = map_data.Insert(start_pos + coord_text_length, Convert.ToString(coord_xy));
+						start_pos += 4;
+					}
+
+					if (safety_net == 1000000)
+						go = false;
+					safety_net++;
 				}
-				else
-				{
-					//modify X in string ->
-					start_pos = map_data.IndexOf(map_size_text_x, start_pos);
-					coord_xy = Get_XY(ref map_data, map_size_text_x, start_pos);
-
-					map_data = map_data.Remove(start_pos + coord_text_length, Convert.ToString(coord_xy).Length);
-					coord_xy += shift_x;
-
-					map_data = map_data.Insert(start_pos + coord_text_length, Convert.ToString(coord_xy));
-					start_pos += 4;
-
-					//modify Y in string ->
-					start_pos = map_data.IndexOf(map_size_text_y, start_pos);
-					coord_xy = Get_XY(ref map_data, map_size_text_y, start_pos);
-
-					map_data = map_data.Remove(start_pos + coord_text_length, Convert.ToString(coord_xy).Length);
-					coord_xy += shift_x;
-
-					map_data = map_data.Insert(start_pos + coord_text_length, Convert.ToString(coord_xy));
-					start_pos += 4;
-				}
-
-				if (safety_net == 20000)
-					go = false;
-				safety_net++;
 			}
 
-			System.IO.File.WriteAllText("Resized Map.json", map_data);;
+			System.IO.File.WriteAllText("Resized Map.json", map_data);
 			Console.WriteLine();
-			Console.WriteLine("Done (Press \"Enter\" to exit");
+			Console.WriteLine("Done (Press \"Enter\" to exit)");
 			Console.ReadKey();
 		}
 	}
