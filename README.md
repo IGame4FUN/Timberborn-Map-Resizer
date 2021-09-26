@@ -8,8 +8,8 @@ A map resizer for timberborn, very inefficient, command lines only.
 **Command structure:**  
 Command | What it does
 :---    | :---
--r      | resizes map, takes 2 signed integers (ex. -r -5 6)
--s      | shifts map, takes 2 signed integers  (ex. -s 5 -6)
+-r      | resizes map from original size, takes 2 signed integers (ex. -r -5 6)
+-s      | shifts map from bottom left corner, takes 2 signed integers  (ex. -s 5 -6)
 -resize | Starts the operation.
 
 _commands can look like this:_
