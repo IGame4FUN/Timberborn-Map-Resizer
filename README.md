@@ -20,8 +20,7 @@ _or like this:_
 "-r 3 2"
 
 **Can:**  
--Copy terrain, water and moisture maps.  
--Copy entities.  
+-Copy terrain map and entities.
 -Resize (-/+) the map.  
 -Shift the map.  
 
