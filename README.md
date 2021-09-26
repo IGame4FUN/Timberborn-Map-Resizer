@@ -12,7 +12,7 @@ Command | What it does
 -s      | shifts map, takes 2 signed integers  (ex. -s 5 -6)
 -resize | Starts the operation.
 
-commands can look like this:
+_commands can look like this:_
 "-resize -r 2 -4 -s 6 10"
 or like this:
 "-r 5 3 -resize -s 10 2"
