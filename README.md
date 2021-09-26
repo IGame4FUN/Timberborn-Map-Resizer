@@ -11,7 +11,7 @@ ex: "-s 2 -4"
 resize the map by inputted amounts (can be negative), if the new map size is too big or too small it adjusts to limits  
 
 "-s _x y_"  
-ex: "-s 6 10"  
+ex: "-r 6 10"  
 shift the map by inputted amount (can be negative)  
 
 "-resize"
