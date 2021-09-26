@@ -15,7 +15,7 @@ Command | What it does
 commands can look like this:
 "-resize -r 2 -4 -s 6 10"
 or like this:
-"-r 2 -4 -resize -s 6 10"
+"-r 5 3 -resize -s 10 2"
 
 **Can:**  
 -Copy terrain, water and moisture maps.  
