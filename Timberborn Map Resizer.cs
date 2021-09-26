@@ -1,7 +1,6 @@
 using System;
-using System.IO;
 
-namespace ConsoleApp1
+namespace Timberborn_Map_Resizer
 {
 	class Program
 	{
@@ -77,24 +76,23 @@ namespace ConsoleApp1
 			return map_var_text_end;
 		}
 
-		static double[,] string_to_int_array2d(ref string[] terrain_map_substrings) //converts substring list to double[,] in specified sizes
+		static double[,] To_Array2d(ref string[] terrain_map_substrings, int local_map_size_x, int local_map_size_y) //converts substring list to double[,] in specified sizes
 		{
 			//write int[,] terrain_map_heights[,]
-			double[,] terrain_map_heights = new double[map_size_x, map_size_y];
-			bool did_it = true;
+			double[,] terrain_map_heights = new double[local_map_size_x, local_map_size_y];
 			int pos1 = 0;
 
-			for (int y = 0; y < map_size_y; y++)
+			for (int y = 0; y < local_map_size_y; y++)
 			{
-				for (int x = 0; x < map_size_x; x++)
+				for (int x = 0; x < local_map_size_x; x++)
 				{
 					var sub = terrain_map_substrings[pos1++];
-					if (did_it = double.TryParse(sub, out double terrain_map_height_int))
+					if (double.TryParse(sub, out double terrain_map_height_int))
 					{
 						terrain_map_heights[x, y] = terrain_map_height_int;
 					}
 					else
-						throw new Exception("Failed to parse (int) from substring");
+						throw new Exception("Failed to parse (double) from substring");
 					//Console.Write($"{terrain_map_heights[x, y]} ");
 				}
 				//Console.WriteLine("");
@@ -103,7 +101,7 @@ namespace ConsoleApp1
 			return terrain_map_heights;
 		}
 
-		static string crop_terrain1(ref double[,] terrain_map_heights, int desired_height2) //thingy
+		static string Crop_Terrain(ref double[,] terrain_map_heights, int desired_height2) //Makes resized map and transfers old map data
 		{
 			//read int[,] terrain_map2_heights[,]
 			double[,] terrain_map2_heights = new double[map2_size_x, map2_size_y];
@@ -127,25 +125,65 @@ namespace ConsoleApp1
 				}
 				//Console.WriteLine("");
 			}
-			int terrain_map2_length = terrain_map2.Length - 1;
 
 			return terrain_map2; //returns string in usable format
 		}
 
-		static double[,] rewrite_map(ref string map_data, string map_text, string map2_text, ref int start_pos, ref int end_pos) // re-writing map data
+		static double[,] Rewrite_Map(ref string map_data, string map_text_index, string map_text2_index, ref int start_pos, ref int end_pos) // re-writing map data
 		{
 
-			start_pos = Start_Pos(ref map_data, map_text);
-			end_pos = End_Pos(ref map_data, map2_text);
+			start_pos = Start_Pos(ref map_data, map_text_index);
+			end_pos = End_Pos(ref map_data, map_text2_index);
 
-			string map = map_data.Substring(start_pos, end_pos - start_pos);
+			string map = map_data[start_pos..end_pos];
 			map_data = map_data.Remove(start_pos, end_pos - start_pos);
 
 			string[] map_substrings = map.Split(' ');
 
-			double[,] map_heights = string_to_int_array2d(ref map_substrings);
+			double[,] map_heights = To_Array2d(ref map_substrings, map_size_x, map_size_y);
 
 			return map_heights;
+		}
+		static bool Accept_Command(ref int rx, ref int ry, ref int sx, ref int sy)
+		{
+			string input_line = Console.ReadLine();
+			string[] command = input_line.Split(' ');
+			bool start = false;
+
+			for (int i = 0; i < command.Length; i++)
+			{
+				Console.WriteLine(command[i][0]);
+				Console.WriteLine($"command[i] : \"{command[i]}\"");
+				if (command[i][0] == '-')
+				{
+					switch (command[i])
+					{
+						case "-r":
+							Console.WriteLine("resize detected");
+							rx = int.Parse(command[i + 1]);
+							ry = int.Parse(command[i + 2]);
+							i += 2;
+							break;
+
+						case "-s":
+							Console.WriteLine("shift detected");
+							sx = int.Parse(command[i + 1]);
+							sy = int.Parse(command[i + 2]);
+							i += 2;
+							break;
+
+						case "-resize":
+							Console.WriteLine("start detected");
+							start = true;
+							break;
+
+						default:
+							Console.WriteLine("invalid command");
+							break;
+					}
+				}
+			}
+			return start;
 		}
 
 		//rudimentary_json_deserializer ()
@@ -155,48 +193,31 @@ namespace ConsoleApp1
 			string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			string file = dir + @"\Map1.json";
 			string map_data = System.IO.File.ReadAllText(file);
-			int map_data_length = map_data.Length;
 
 			// getting map size ->
 			map_size_x = Get_XY(ref map_data, map_size_text_x); //(MIN: 4x4, MAX: 256x256)
 			map_size_y = Get_XY(ref map_data, map_size_text_y); //(MIN: 4x4, MAX: 256x256)
 
 			//console input
+			bool start = false;
+			while (!start)
+				start = Accept_Command(ref resize_x, ref resize_y, ref shift_x, ref shift_y);
 
-			Console.WriteLine("Choose re-size value: ");
-
-			Console.Write("(can be negative) map_size_x + ");
-
-			resize_x = int.Parse(Console.ReadLine());
-			if (resize_x + map_size_x > 256)
+			switch (resize_x)
 			{
-				Console.WriteLine("Size too big, resizing X to 256");
-				resize_x = 256 - map_size_x;
-			}
-			if (resize_x + map_size_x < 4)
-			{
-				Console.WriteLine("Size too small, resizing X to 4");
-				resize_x = 4 - map_size_x;
-			}
-
-
-			Console.Write("(can be negative) map_size_y + ");
-
-			resize_y = int.Parse(Console.ReadLine());
-			if (resize_y + map_size_y > 256)
-			{
-				Console.WriteLine("Size too big, resizing Y to 256");
-				resize_y = 256 - map_size_y;
-			}
-			if (resize_y + map_size_y < 4)
-			{
-				Console.WriteLine("Size too small, resizing Y to 4");
-				resize_y = 4 - map_size_y;
+				case < 4:
+					break;
+				case > 256:
+					break;
 			}
 
 			// resizing ->
 			map2_size_x = map_size_x + resize_x; //(MIN: 4x4, MAX: 256x256)
 			map2_size_y = map_size_y + resize_y; //(MIN: 4x4, MAX: 256x256)
+
+			//center map ->
+			shift_x = (map2_size_x - map_size_x) / 2;
+			shift_y = (map2_size_y - map_size_y) / 2;
 
 			int index_temp = Start_Pos(ref map_data, map_size_text_x);
 
@@ -208,48 +229,29 @@ namespace ConsoleApp1
 			map_data = map_data.Remove(index_temp, Convert.ToString(map_size_y).Length);
 			map_data = map_data.Insert(index_temp, Convert.ToString(map2_size_y));
 
-			//console input
-			Console.Write("Would you like to shift map? (Y/N): ");
-			char answer = char.Parse(Console.ReadLine());
-
-			if (answer == 'Y' || answer == 'y')
-			{
-				Console.Write("shift_x (can be negative):");
-				shift_x = int.Parse(Console.ReadLine());
-
-				Console.Write("shift_y (can be negative):");
-				shift_y = int.Parse(Console.ReadLine());
-			}
-			else
-			{
-				//center map ->
-				shift_x = (map2_size_x - map_size_x) / 2;
-				shift_y = (map2_size_y - map_size_y) / 2;
-			}
-
 			int start_pos = 0;
 			int end_pos = 0;
 			string map;
-			double[,] map2 = new double[map2_size_x, map2_size_y];
+			double[,] map2;
 
 			//Console.WriteLine("terrain_map");
-			map2 = rewrite_map(ref map_data, terrain_map_text, camera_restorer_text, ref start_pos, ref end_pos);
+			map2 = Rewrite_Map(ref map_data, terrain_map_text, camera_restorer_text, ref start_pos, ref end_pos);
 
-			map = crop_terrain1(ref map2, desired_height);
+			map = Crop_Terrain(ref map2, desired_height);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
 			//Console.WriteLine("water_map");
-			map2 = rewrite_map(ref map_data, water_map_text, outflows_text, ref start_pos, ref end_pos);
+			map2 = Rewrite_Map(ref map_data, water_map_text, outflows_text, ref start_pos, ref end_pos);
 
-			map = crop_terrain1(ref map2, 0);
+			map = Crop_Terrain(ref map2, 0);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
 			//Console.WriteLine("moisture_map");
-			map2 = rewrite_map(ref map_data, soil_moisture_simulator_text, entities_text, ref start_pos, ref end_pos);
+			map2 = Rewrite_Map(ref map_data, soil_moisture_simulator_text, entities_text, ref start_pos, ref end_pos);
 
-			map = crop_terrain1(ref map2, 0);
+			map = Crop_Terrain(ref map2, 0);
 			map = map.Remove(map.Length - 1, 1);
 			map_data = map_data.Insert(start_pos, map);
 
@@ -325,8 +327,9 @@ namespace ConsoleApp1
 				safety_net++;
 			}
 
-			File.WriteAllText("Resized Map.json", map_data);
-			Console.WriteLine("Done");
+			System.IO.File.WriteAllText("Resized Map.json", map_data);;
+			Console.WriteLine();
+			Console.WriteLine("Done (Press \"Enter\" to exit");
 			Console.ReadKey();
 		}
 	}
