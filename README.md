@@ -2,7 +2,7 @@
 A map resizer for timberborn, very inefficient, command lines only.   
 
 **How to use:**  
--Copy-paste your map into the same folder as executable re-named as "Map1.json"
+-Copy-paste your map into the same folder as executable re-named as "Map1.json"  
 -It will spit out a "Resized Map.json"  
 
 **Can:**  
