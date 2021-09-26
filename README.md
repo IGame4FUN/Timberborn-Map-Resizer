@@ -5,19 +5,23 @@ A map resizer for timberborn, very inefficient, command lines only.
 -Copy-paste your map into the same folder as executable re-named as "Map1.json"  
 -It will spit out a "Resized Map.json"  
 
-**After running the executable it will ask you for input:**  
+**Command structure:**  
 
--These resize the map by inputted amounts, if the new map size is too big or too small it adjusts to limits:  
+"-r _x y_"  
+ex: "-s 2 -4"  
+resize the map by inputted amounts (can be negative), if the new map size is too big or too small it adjusts to limits  
 
-_"(can be negative) map_size_x + "  
-"(can be negative) map_size_y + "_  
+"-s _x y_"  
+ex: "-s 6 10"  
+shift the map by inputted amount (can be negative)  
 
-"Would you like to shift map? (Y/N): " (centers the map if anything but Y/y is written)  
+"-resize"
+Starts the operation after reading entire inputted command line
 
--These shift the map by input amount:  
-
-_"(can be negative) shift_x: "  
-"(can be negative) shift_y: "_  
+commands can look like this:
+"-resize -r 2 -4 -s 6 10"
+or like this:
+"-r 2 -4 -resize -s 6 10"
 
 **Can:**  
 -Copy terrain, water and moisture maps.  
