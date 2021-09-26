@@ -7,6 +7,18 @@ A map resizer for timberborn, very inefficient, command lines only.
 
 **Command structure:**  
 
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+
+```
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+```
+
 Comand List: -r, -s, -resize;
 
 "-r _x y_"  
