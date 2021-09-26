@@ -6,8 +6,8 @@ A map resizer for timberborn, very inefficient, command lines only.
 -It will spit out a "Resized Map.json"  
 
 **Command structure:**  
-Left aligned Header | Left aligned Header
 Command | What it does
+:---    | :---
 --------| --------
 -r      | Takes [x] and [y] (ex. -r 5 6)
 -s      | Takes [x] and [y] (ex. -s -4 5
