@@ -14,7 +14,7 @@ Command | What it does
 
 _commands can look like this:_
 "-resize -r 2 -4 -s 6 10"
-or like this:
+_or like this:_
 "-r 5 3 -resize -s 10 2"
 
 **Can:**  
