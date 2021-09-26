@@ -12,7 +12,7 @@ A map resizer for timberborn, very inefficient, command lines only.
 _"(can be negative) map_size_x + "  
 "(can be negative) map_size_y + "_  
 
-"Would you like to shift map? (Y/N): " (centers the map if anything but Y is chosen)  
+"Would you like to shift map? (Y/N): " (centers the map if anything but Y/y is written)  
 
 -These shift the map by input amount:  
 
