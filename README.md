@@ -8,8 +8,8 @@ A map resizer for timberborn, very inefficient, command lines only.
 **Command structure:**  
 Command | What it does
 :---    | :---
--r      | Takes [x] and [y] (ex. -r 5 6)
--s      | Takes [x] and [y] (ex. -s -4 5
+-r      | Takes [x] and [y] (ex. -r -5 6)
+-s      | Takes [x] and [y] (ex. -s 5 -6)
 -resize | Starts the operation.
 
 commands can look like this:
