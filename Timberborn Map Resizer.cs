@@ -101,7 +101,7 @@ namespace Timberborn_Map_Resizer
 			return terrain_map_heights;
 		}
 
-		static string Crop_Terrain(ref double[,] terrain_map_heights, int desired_height2) //Makes resized map and transfers old map data
+		static string Crop_Terrain(ref double[,] terrain_map_heights, int desired_height2) //transfers old map data to new resized map
 		{
 			//read int[,] terrain_map2_heights[,]
 			double[,] terrain_map2_heights = new double[map2_size_x, map2_size_y];
@@ -159,26 +159,28 @@ namespace Timberborn_Map_Resizer
 					switch (command[i])
 					{
 						case "-r":
-							Console.WriteLine("resize detected");
-							rx = int.Parse(command[i + 1]);
-							ry = int.Parse(command[i + 2]);
-							i += 2;
+							Console.WriteLine("Resize detected");
+							if (!int.TryParse(command[i + 1], out rx))
+								Console.WriteLine("Invalid x resize value");
+							if (!int.TryParse(command[i + 2], out ry))
+								Console.WriteLine("Invalid y resize value");
 							break;
 
 						case "-s":
-							Console.WriteLine("shift detected");
-							sx = int.Parse(command[i + 1]);
-							sy = int.Parse(command[i + 2]);
-							i += 2;
+							Console.WriteLine("Shift detected");
+							if (!int.TryParse(command[i + 1], out sx))
+								Console.WriteLine("Invalid x resize value");
+							if (!int.TryParse(command[i + 2], out sy))
+								Console.WriteLine("Invalid y resize value");
 							break;
 
 						case "-resize":
-							Console.WriteLine("start detected");
+							Console.WriteLine("Start detected");
 							start = true;
 							break;
 
 						default:
-							Console.WriteLine("invalid command");
+							Console.WriteLine("Invalid command");
 							break;
 					}
 				}
