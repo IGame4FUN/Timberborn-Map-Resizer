@@ -6,6 +6,9 @@ A map resizer for timberborn, very inefficient, command lines only.
 -It will spit out a "Resized Map.json"  
 
 **Command structure:**  
+
+Comand List: -r, -s, -resize;
+
 "-r _x y_"  
 ex: "-r 2 -4"  
 resize the map by inputted amounts (can be negative), if the new map size is too big or too small it adjusts to limits  
