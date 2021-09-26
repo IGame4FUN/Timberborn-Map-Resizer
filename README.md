@@ -7,7 +7,7 @@ A map resizer for timberborn, very inefficient, command lines only.
 
 **Command structure:**  
 "-r _x y_"  
-ex: "-t 2 -4"  
+ex: "-r 2 -4"  
 resize the map by inputted amounts (can be negative), if the new map size is too big or too small it adjusts to limits  
 
 "-s _x y_"  
