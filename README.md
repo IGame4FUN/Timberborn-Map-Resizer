@@ -5,7 +5,6 @@ A map resizer for timberborn, very inefficient, command lines only.
 -Copy-paste your map into the same folder as executable re-named as "Map1.json"  
 -It will spit out a "Resized Map.json"  
 
-**Command structure:**  
 Command | What it does
 :---    | :---
 -r      | resizes map from original size, takes 2 signed integers (ex. -r -5 6)
