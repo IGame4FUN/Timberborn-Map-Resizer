@@ -12,7 +12,7 @@ Command | What it does
 -s      | shifts map from bottom left corner, takes 2 signed integers  (ex. -s 5 -6)
 -h      | height for the extended land
 -re     | removes entities
--wm     | adds watter and moisture maps (NOT IMPLEMENTED YET)
+-wm     | adds watter and moisture maps (NOT IMPLEMENTED)
 -resize | Starts the operation.
 
 _commands can look like this:_
