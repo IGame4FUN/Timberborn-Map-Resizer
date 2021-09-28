@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -17,30 +17,36 @@ namespace TB_Map_Resizer {
 			int map_size_x = tm.Singletons.MapSize.Size.X; //(MIN: 4x4, MAX: 256x256)
 			int map_size_y = tm.Singletons.MapSize.Size.Y; //(MIN: 4x4, MAX: 256x256)
 
-			// setting default resize and shift values
+			// setting default resize, shift values and desired height
 			int resize_x = 0;
 			int resize_y = 0;
 
 			int shift_x = 0;
 			int shift_y = 0;
 
+			int desired_height = 0;
+
 			// console stuff
 			bool start = false;
 			bool remove_entities = false;
-			bool testing = true;
+			bool testing = false;
 			bool water_maps = false;
 
 			// read console input if testing == false;
 			if (!testing)
-				while (!start) // reading console commands (-r x y, -s x y, -re, -wm) until method returns true (-resize)
-					start = Repo.Accept_Command(ref resize_x, ref resize_y, ref shift_x, ref shift_y, ref remove_entities, ref water_maps);
+				while (!start) // reading console commands (-r x y, -s x y, -h, -re, -wm) until method returns true (-resize)
+					start = Repo.Accept_Command(ref resize_x, ref resize_y, ref shift_x, ref shift_y, ref desired_height, ref remove_entities, ref water_maps);
 
 			Console.WriteLine("Working...");
 
-			// setting resized map size
-			int map2_size_x = map_size_x + resize_x; //(MIN: 4x4, MAX: 256x256)
-			int map2_size_y = map_size_y + resize_y; //(MIN: 4x4, MAX: 256x256)
+			// setting resized map size //(MIN: 4x4, MAX: 256x256)
+			int map2_size_x = map_size_x + resize_x;
+			int map2_size_y = map_size_y + resize_y;
 
+			tm.Singletons.MapSize.Size.X = map2_size_x;
+			tm.Singletons.MapSize.Size.Y = map2_size_y;
+
+			string desired_height_string = desired_height.ToString(); // preping height string
 
 			if ((shift_x == 0 && shift_y == 0) || !testing)
             {
@@ -52,21 +58,11 @@ namespace TB_Map_Resizer {
             }
 			
 
-			string[] TerrainMap_Substrings = tm.Singletons.TerrainMap.Heights.Array.Split(' '); // take TerrainMap heights as substrings
+			string[] TerrainMap_Heights = tm.Singletons.TerrainMap.Heights.Array.Split(' '); // take TerrainMap heights as substrings
 
-			// converts the array of substrings into a IEnumerable<byte> (".Select(x => Convert.ToByte(x))") and then to a byte array (".ToArray()")
-			// (why do docs have 2 args for .Select() lol)
-			byte[] TerrainMap_Heights = TerrainMap_Substrings.Select(xy => Convert.ToByte(xy)).ToArray();
+			string[] Resized_TerrainMap = Repo.Resize_TerrainMap(TerrainMap_Heights, map_size_x, map_size_y, map2_size_x, map2_size_y, shift_x, shift_y, desired_height_string); // hellhole #1
 
-			byte[,] Resized_TerrainMap = new byte[map2_size_x, map2_size_y]; // preping resized map
-
-			//Console.WriteLine("\ncropped terrain_map -->\n");
-
-			byte[] Resized_TerrainMap_Test = new byte[map2_size_x * map2_size_y]; //test
-
-			Resized_TerrainMap_Test = Repo.Resize_TerrainMap(TerrainMap_Heights, map_size_x, map_size_y, map2_size_x, map2_size_y, shift_x, shift_y); // hellhole #1
-			
-			tm.Singletons.TerrainMap.Heights.Array = string.Join(' ', Resized_TerrainMap_Test); // array -> string
+			tm.Singletons.TerrainMap.Heights.Array = string.Join(' ', Resized_TerrainMap); // array -> string
 
 			//Console.WriteLine($"{tm.Singletons.TerrainMap.Heights.Array}L");
 
@@ -75,18 +71,17 @@ namespace TB_Map_Resizer {
             {
 				for (int y = 0; y < map2_size_y; y++)
                 {
-					Console.Write($"{Resized_TerrainMap_Test[x * map2_size_x + y]} ");
+					Console.Write($"{Resized_TerrainMap[x * map2_size_x + y]} ");
                 }
 				Console.WriteLine();
             }
 			*/
 
-			// water_map, outflows, moisture
+			// water_map, moisture
 			if (!water_maps)
 			{
-				tm.Singletons.WaterMap.WaterDepths.Array = null;
-				tm.Singletons.WaterMap.Outflows.Array = null;
-				tm.Singletons.SoilMoistureSimulator.MoistureLevels.Array = null;
+				tm.Singletons.WaterMap = null;
+				tm.Singletons.SoilMoistureSimulator = null;
 			}
             else // implement? maybe xd
             {
@@ -97,20 +92,24 @@ namespace TB_Map_Resizer {
 			// entities
 			if (remove_entities)
 			{
-				tm.Entities.Clear(); // deletes all entities
+				tm.Entities = null; // deletes all entities
 			}
 			else
 			{
-				foreach (var obj in tm.Entities) //shift & crop entities according to new map
+				int end_pos = tm.Entities.Count;
+				for (int i = 0; i < end_pos; i++) //shift & crop entities according to new map
 				{
-					int coord_x = obj.Components.BlockObject.Coordinates.X;
-					int coord_y = obj.Components.BlockObject.Coordinates.Y;
+					int coord_x = tm.Entities[i].Components.BlockObject.Coordinates.X;
+					int coord_y = tm.Entities[i].Components.BlockObject.Coordinates.Y;
 
-					if (!(coord_x + shift_x > map2_size_x || coord_x + shift_x < 0))
-						obj.Components.BlockObject.Coordinates.X = coord_x + shift_x;
-					if (!(coord_y + shift_y > map2_size_y || coord_y + shift_y < 0))
-						obj.Components.BlockObject.Coordinates.Y = coord_y + shift_y;
-
+					if (!(coord_x + shift_x > map2_size_x && coord_x + shift_x < 0))
+						tm.Entities[i].Components.BlockObject.Coordinates.X = coord_x + shift_x;
+					else
+						tm.Entities[i] = null;
+					if (!(coord_y + shift_y > map2_size_y && coord_y + shift_y < 0))
+						tm.Entities[i].Components.BlockObject.Coordinates.Y = coord_y + shift_y;
+					else
+						tm.Entities[i] = null;
 				}
 			}
 
@@ -120,7 +119,7 @@ namespace TB_Map_Resizer {
 				
 			};
 
-			File.WriteAllText("Resized Map 3.json", JsonSerializer.Serialize(tm, options));
+			File.WriteAllText("Resized Map.json", JsonSerializer.Serialize(tm, options));
 		}
     }
 }
