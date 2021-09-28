@@ -10,17 +10,20 @@ Command | What it does
 :---    | :---
 -r      | resizes map from original size, takes 2 signed integers (ex. -r -5 6)
 -s      | shifts map from bottom left corner, takes 2 signed integers  (ex. -s 5 -6)
+-h      | height for the extended land
+-re     | removes entities
+-wm     | adds watter and moisture maps (NOT IMPLEMENTED YET)
 -resize | Starts the operation.
 
 _commands can look like this:_
 "-resize -r 2 -4 -s 6 10"
 _like this:_
-"-r 5 3 -resize -s 10 2"
+"-r 5 3 -h -re"
 _or like this:_
 "-r 3 2"
 
 **Can:**  
--Copy terrain map and entities.
+-Copy terrain map and entities. (and crop when necesarry)  
 -Resize (-/+) the map.  
 -Shift the map.  
 
