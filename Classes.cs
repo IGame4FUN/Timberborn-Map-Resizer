@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 // Root myDeserializedClass = JsonSerializer.Deserialize<Root>(myJsonResponse);
@@ -16,7 +16,6 @@ public class MapSize {
 }
 
 public class Heights {
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     [JsonPropertyName("Array")]
     public string Array { get; set; }
 }
@@ -57,13 +56,11 @@ public class CameraStateRestorer {
 }
 
 public class WaterDepths {
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     [JsonPropertyName("Array")]
     public string Array { get; set; }
 }
 
 public class Outflows {
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     [JsonPropertyName("Array")]
     public string Array { get; set; }
 }
@@ -77,7 +74,6 @@ public class WaterMap {
 }
 
 public class MoistureLevels {
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     [JsonPropertyName("Array")]
     public string Array { get; set; }
 }
@@ -291,4 +287,3 @@ public class Root {
     [JsonPropertyName("Entities")]
     public List<Entity> Entities { get; set; }
 }
-
