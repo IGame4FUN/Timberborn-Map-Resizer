@@ -30,14 +30,14 @@ namespace TB_Map_Resizer {
 
 			// quick loop?
 			for (int x = x_start_val; x < x_end_val; x++) // rows
-            {
+            		{
 				for (int y = y_start_val; y < y_end_val; y++) // columns
-                {
+                		{
 					Resized_TerrainMap[(x - x_start_val + clamped_shift_x) * map2_size_x + (y - y_start_val + clamped_shift_y)] = terrain_map[x * map_size_x + y];
-                }
+               			}
 			}
 			return Resized_TerrainMap; //returns refit, cropped & resized byte[,] map
-        }
+       		}
 
 		public bool Accept_Command(ref int rx, ref int ry, ref int sx, ref int sy, ref int h, ref bool remove_entities, ref bool wm) //for console use change to "testing = false" in Main()
 		{
