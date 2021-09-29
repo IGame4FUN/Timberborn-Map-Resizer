@@ -8,12 +8,12 @@ As an added benefit, it compresses the Map.json file size by about 4 times by re
 
 Command | What it does
 :---    | :---
--r      | resizes map from original size, takes 2 signed integers (ex. -r -5 6)
--s      | shifts map from bottom left corner, takes 2 signed integers  (ex. -s 5 -6)
--h      | height for the extended land
+-r      | resize values, takes 2 signed integers (ex. -r -5 6)
+-s      | shift values, takes 2 signed integers  (ex. -s 5 -6)
+-h      | height for added map
 -re     | removes entities
 -wm     | adds water and moisture maps (NOT IMPLEMENTED)
--resize | Starts the operation.
+-resize | starts the operation
 
 _commands can look like this:_
 "-resize -r 2 -4 -s 6 10"
