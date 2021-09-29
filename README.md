@@ -23,7 +23,7 @@ _or like this:_
 **"-r 3 2"**
 
 **Can:**  
--Copy terrain map and entities. (and crop when necesarry)  
+-Copy map and entities. (and crop when necesarry)  
 -Resize (-/+) the map.  
 -Shift the map.  
 
