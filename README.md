@@ -16,11 +16,11 @@ Command | What it does
 -resize | starts the operation
 
 console commands can look _like this:_
-"-resize -r 2 -4 -s 6 10"
+**"-resize -r 2 -4 -s 6 10"**
 _like this:_
-"-r 5 3 -h -re"
+**"-r 5 3 -h -re"**
 _or like this:_
-"-r 3 2"
+**"-r 3 2"**
 
 **Can:**  
 -Copy terrain map and entities. (and crop when necesarry)  
