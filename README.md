@@ -15,7 +15,7 @@ Command | What it does
 -wm     | adds water and moisture maps
 -resize | starts the operation
 
-_console commands can look like this:_
+console commands can look _like this:_
 "-resize -r 2 -4 -s 6 10"
 _like this:_
 "-r 5 3 -h -re"
