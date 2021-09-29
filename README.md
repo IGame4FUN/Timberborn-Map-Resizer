@@ -12,7 +12,7 @@ Command | What it does
 -s      | shift values, takes 2 signed integers  (ex. -s 5 -6)
 -h      | height for added map
 -re     | removes entities
--wm     | adds water and moisture maps (NOT IMPLEMENTED)
+-wm     | adds water and moisture maps
 -resize | starts the operation
 
 _console commands can look like this:_
