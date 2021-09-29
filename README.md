@@ -1,5 +1,5 @@
 # Timberborn Map Resizer
-A map resizer for timberborn, fairly efficient, command lines only.  (.NET 5.0)
+A map resizer for timberborn, fairly efficient, command lines only.  (.NET 5.0)  
 As an added benefit, it compresses the Map.json file size by about 4 times by removing water maps that can be simulated in-game.  
 
 **How to use:**  
